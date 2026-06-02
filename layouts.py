@@ -132,14 +132,66 @@ def create_layout():
                             ),
                 ]
 ),
-## НАЧАЛО ВТОРОЙ ВКЛАДКИ
             dbc.Tab(
                 label = 'Отраслевой анализ',
-                children = []
-
+                children = [
+                    dbc.Row(
+                            dbc.Col(
+                                dcc.Graph(
+                                    figure = load_barchart(),
+                                    style={
+                                        'height': '600px'
+                                        }
+                                        )
+                                    , width=12, xs=12, md=12,
+                                    className='custom-card mb-3 mt-3'),
+                            className='px-3'
+                            ),
+                    dbc.Row([
+                            dbc.Col(
+                                 dbc.Input(
+                                     id='ticker-input',
+                                     placeholder='Введите тикер акции',
+                                     type='text'                               
+                                 ),
+                                width=4, xs=12, md=4,
+                                className='custom-card mb-3 mt-3'
+                            ),
+                            dbc.Col(
+                                 dcc.Dropdown(
+                                     id='sector-dropdown',
+                                     placeholder='Выберите отрасль',
+                                     searchable=False,
+                                     options=sector_options,
+                                 ),
+                                 width=4,
+                                 className='custom-card mb-3 mt-3'                      
+                            ),
+                            dbc.Col(
+                                 dcc.Dropdown(
+                                     id='cluster-dropdown',
+                                     placeholder='Выберите кластер',
+                                     searchable=False,
+                                     options=cluster_options
+                                 ),
+                                 className='custom-card mb-3 mt-3'
+                            )
+                            ],
+                            className='px-3'
+                        ),
+                    dbc.Row(
+                        dbc.Col(
+                            load_table(),
+                            width=12,
+                            className='custom-card mb-3 mt-3'
+                                ),
+                            className='px-3'
+                            )
+                ]
             )
         ],
         className = 'custom-tabs'
         )
     ],
     fluid=True)
+
