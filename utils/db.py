@@ -1,9 +1,12 @@
 import os
-from dotenv import load_dotenv
-from sqlalchemy import create_engine, select, func
-from sqlalchemy.orm import sessionmaker
-from utils.models import ClustersHeatmap, ClustersSectors, ClustersDesc
+
 import pandas as pd
+from dotenv import load_dotenv
+from sqlalchemy import create_engine, select
+from sqlalchemy.orm import sessionmaker
+
+from utils.models import ClustersDesc, ClustersHeatmap, ClustersSectors
+
 
 load_dotenv()
 
@@ -24,54 +27,65 @@ def load_clusters_desc():
     with SessionLocal() as session:
         result = session.scalars(query).all()
 
-        clust_desc = pd.DataFrame([
-                {"ticker": r.ticker,
-                 "mean_return": r.mean_return,
-                 "volatility": r.volatility,
-                 "mean_value": r.mean_value,
-                 "mean_value_log": r.mean_value_log,
-                 "cluster": r.cluster,
-                 "pca1": r.pca1,
-                 "pca2": r.pca2,
-                 "return_scaled": r.return_scaled,
-                 "volatility_scaled": r.volatility_scaled,
-                 "liquidity_scaled": r.liquidity_scaled,
-                 "isin": r.isin,
-                 "sector": r.sector,
-                 "description": r.description
-                 }
-        for r in result
-        ])
+        clust_desc = pd.DataFrame(
+            [
+                {
+                    "ticker": r.ticker,
+                    "mean_return": r.mean_return,
+                    "volatility": r.volatility,
+                    "mean_value": r.mean_value,
+                    "mean_value_log": r.mean_value_log,
+                    "cluster": r.cluster,
+                    "pca1": r.pca1,
+                    "pca2": r.pca2,
+                    "return_scaled": r.return_scaled,
+                    "volatility_scaled": r.volatility_scaled,
+                    "liquidity_scaled": r.liquidity_scaled,
+                    "isin": r.isin,
+                    "sector": r.sector,
+                    "description": r.description,
+                }
+                for r in result
+            ]
+        )
         return clust_desc
-    
+
+
 def load_clusters_heatmap():
     query = select(ClustersHeatmap)
 
     with SessionLocal() as session:
         result = session.scalars(query).all()
 
-        clust_heatmap = pd.DataFrame([
-                {"cluster": r.cluster,
-                 "mean_return": r.mean_return,
-                 "volatility": r.volatility,
-                 "mean_value_log": r.mean_value_log
-                 }
-        for r in result
-        ])
+        clust_heatmap = pd.DataFrame(
+            [
+                {
+                    "cluster": r.cluster,
+                    "mean_return": r.mean_return,
+                    "volatility": r.volatility,
+                    "mean_value_log": r.mean_value_log,
+                }
+                for r in result
+            ]
+        )
         return clust_heatmap
-    
+
+
 def load_clusters_sectors():
     query = select(ClustersSectors)
 
     with SessionLocal() as session:
         result = session.scalars(query).all()
 
-        clust_sectors = pd.DataFrame([
-                {"id": r.id,
-                 "sector": r.sector,
-                 "cluster": r.cluster,
-                 "count": r.count
-                 }
-        for r in result
-        ])
+        clust_sectors = pd.DataFrame(
+            [
+                {
+                    "id": r.id,
+                    "sector": r.sector,
+                    "cluster": r.cluster,
+                    "count": r.count,
+                }
+                for r in result
+            ]
+        )
         return clust_sectors

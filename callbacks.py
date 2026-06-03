@@ -1,38 +1,37 @@
 from dash import Input, Output
 from utils.db import load_clusters_desc
 
+CLUSTER_NAMES = {
+    '0': 'Умеренно рискованные акции',
+    '1': 'Защитные акции',
+    '2': 'Спекулятивные акции',
+    '3': 'Низколиквидные умеренные акции',
+}
+
 
 def register_callbacks(app):
 
     @app.callback(
-            Output('stocks-table', 'data'),
-            Input('ticker-input', 'value'),
-            Input('sector-dropdown', 'value'),
-            Input('cluster-dropdown', 'value')
+        Output('stocks-table', 'data'),
+        Input('ticker-input', 'value'),
+        Input('sector-dropdown', 'value'),
+        Input('cluster-dropdown', 'value'),
     )
-
     def update_dashboard(ticker_value, sector_value, cluster_value):
         data_table = load_clusters_desc()
-        
         data_table['cluster'] = (
             data_table['cluster']
             .astype(str)
-            .map(
-                {
-                    '0': 'Умеренно рискованные акции',
-                    '1': 'Защитные акции',
-                    '2': 'Спекулятивные акции',
-                    '3': 'Низколиквидные умеренные акции'
-                }
-            )
-    )
+            .map(CLUSTER_NAMES)
+        )
 
         if ticker_value:
             data_table = data_table[
-                data_table['ticker']
-                .str.contains(ticker_value,
-                              case=False,
-                              na=False)
+                data_table['ticker'].str.contains(
+                    ticker_value,
+                    case=False,
+                    na=False,
+                )
             ]
 
         if sector_value:
@@ -45,4 +44,4 @@ def register_callbacks(app):
                 data_table['cluster'] == cluster_value
             ]
 
-        return data_table.to_dict('records')
+        return data_table.to_dict(orient='records')

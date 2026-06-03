@@ -1,4 +1,4 @@
-from sqlalchemy import  Float, Integer, String
+from sqlalchemy import Float, Integer, String
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 class Base(DeclarativeBase):
@@ -23,6 +23,7 @@ class ClustersDesc(Base):
     sector: Mapped[str | None] = mapped_column(String, nullable=True)
     description: Mapped[str | None] = mapped_column(String, nullable=True)
 
+
 class ClustersHeatmap(Base):
     __tablename__ = "clusters_heatmap"
 
@@ -31,10 +32,11 @@ class ClustersHeatmap(Base):
     volatility: Mapped[float | None] = mapped_column(Float, nullable=True)
     mean_value_log: Mapped[float | None] = mapped_column(Float, nullable=True)
 
+
 class ClustersSectors(Base):
     __tablename__ = "clusters_sectors"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     sector: Mapped[str | None] = mapped_column(String, nullable=True)
-    cluster: Mapped[int | None] = mapped_column(Integer,nullable=True)
+    cluster: Mapped[int | None] = mapped_column(Integer, nullable=True)
     count: Mapped[int | None] = mapped_column(Integer, nullable=True)
