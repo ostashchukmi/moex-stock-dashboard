@@ -11,12 +11,9 @@ from sklearn.cluster import KMeans
 
 from sklearn.decomposition import PCA
 
-from sklearn.metrics import silhouette_score
-from sklearn.metrics import davies_bouldin_score
-from sklearn.metrics import calinski_harabasz_score
-
 warnings.filterwarnings("ignore")
 
+from utils.db import engine
 
 stock_url = 'https://iss.moex.com/iss/engines/stock/markets/shares/securities.json'
 
@@ -117,10 +114,10 @@ history_25_26 = pd.concat(history, ignore_index=True)
 
 all_tickets_history = pd.concat([history_22_23, history_23_24, history_24_25, history_25_26], ignore_index=True)
 
-dict = pd.read_excel('dictionary.xlsx')
+dictionary = pd.read_excel('dictionary.xlsx')
 
 history = all_tickets_history[['ticker', 'begin', 'close', 'value']]
-history.sort_values(['ticker', 'begin'])
+history = history.sort_values(['ticker', 'begin'])
 history['begin'] = pd.to_datetime(history['begin'])
 history = history[
 (history['ticker'] != 'BTBR') &
@@ -169,11 +166,29 @@ clusters_desc['pca2'] = X_pca[:, 1]
 clusters_desc['return_scaled'] = X[:, 0]
 clusters_desc['volatility_scaled'] = X[:, 1]
 clusters_desc['liquidity_scaled'] = X[:, 2]
-clusters_desc = clusters_desc.merge(dict, how='left', on='ticker')
+clusters_desc = clusters_desc.merge(dictionary, how='left', on='ticker')
 
 clusters_sectors = clusters_desc.groupby(['sector', 'cluster'])['isin'].count().reset_index().rename(columns={'isin': 'count'})
 clusters_sectors['id'] = range(1, len(clusters_sectors) + 1)
 clusters_sectors = clusters_sectors[['id', 'sector', 'cluster', 'count']]
 
+clusters_desc.to_sql(
+    'clusters_desc',
+    engine,
+    if_exists='replace',
+    index=False,
+)
 
+clusters_heatmap.to_sql(
+    'clusters_heatmap',
+    engine,
+    if_exists='replace',
+    index=False,
+)
 
+clusters_sectors.to_sql(
+    'clusters_sectors',
+    engine,
+    if_exists='replace',
+    index=False,
+)
