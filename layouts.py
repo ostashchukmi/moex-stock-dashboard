@@ -43,7 +43,7 @@ def create_layout():
     return dbc.Container(
         [
             dbc.NavbarSimple(
-                brand='Исследования закономерностей поведения рынка акций Московской биржи',
+                brand='Исследование закономерностей поведения рынка акций Московской биржи',
                 className='custom-navbar',
                 ),
                 dbc.Tabs(
